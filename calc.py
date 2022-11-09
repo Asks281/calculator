@@ -18,23 +18,28 @@ def sin(x):
     if x<0: #support for negative entries
         neg = True
         x*=(-1)
-    x = x%pi
+    x = x%(2*pi) #bringing the input closer to 0 as the Maclaurin series will have less error around 0.
+    expression = 0
+    for iter in range(20):
+        expression = expression + ((-1)**iter)*(x**(2*iter + 1))/fac(2*iter + 1)
     if neg == True:
-        return -(x - x**3/fac(3) + x**5/fac(5) - x**7/fac(7) + x**9/fac(9))
+        return -(expression)
     else:
-        return (x - x**3/fac(3) + x**5/fac(5) - x**7/fac(7) + x**9/fac(9))
+        return expression
 
 def cos(x):
-    if x<0:
+    if x<0: #support for negative entries
         x*=(-1)
-    n=0
-    x = x%pi
-    return (1 - x**2/fac(2) + x**4/fac(4) - x**6/fac(6) + x**8/fac(8))
+    expression = 0
+    x = x%(2*pi) #bringing the input closer to 0 as the Maclaurin series will have less error around 0.
+    for iter in range(20):
+        expression = expression + ((-1)**iter)*(x**(2*iter))/fac(2*iter)
+    return expression
 
 def tan(x):
     return sin(x)/cos(x)
 
-def max_freq(x):
+def max_freq(x): #returns highest occuring elem in a list
     set_soln = set(x)
     list_set = list(set_soln)
     freq = 0
@@ -46,9 +51,9 @@ def max_freq(x):
             elem = item
     return elem
 
-def arcsin(x):
+def arcsin(x): #using Newton–Raphson method for finding root of y = x0(input) and sin(x).
     var_list = []
-    for iter in range(10):    
+    for iter in range(10):    #running the algorithm a few times to eliminate wrong roots due to divergence.
         var = random.uniform(-pi/2, pi/2)
         #print(var)
 
@@ -59,12 +64,12 @@ def arcsin(x):
             var_next = next(var, x)
             var = var_next
         var_list.append(var)
-    out = max_freq(var_list)
+    out = max_freq(var_list) #taking in the highest occuring root (presumably correct)
     return out
 
-def arccos(x):
+def arccos(x): #using Newton–Raphson method for finding root of y = x0(input) and sin(x).
     var_list = []
-    for iter in range(10): 
+    for iter in range(10): #running the algorithm a few times to eliminate wrong roots due to divergence.
         var = random.uniform(0, pi)
         #print(var)
 
@@ -75,14 +80,14 @@ def arccos(x):
             var_next = next(var, x)
             var = var_next
         var_list.append(var)
-    out = max_freq(var_list)
+    out = max_freq(var_list) #taking in the highest occuring root (presumably correct)
     return out
 
-def arctan(x):
+def arctan(x): #works only till three decimal points
     val = arcsin(x/((1+x**2)**(1/2)))
     return val
 
-
+print("\nCALCULATOR\n")
 interface = "0. Exit\n1. Add '+'\n2. Subtract '-'\n3. Multiply 'x'\n4. Divide '/'\n5. Exponentiation '^'\n6. Factorial '!'\n7. sin()\n8. cos()\n9. tan()\n10. arcsin()\n11. arccos()\n12. arctan()"
 print(interface)
 
@@ -92,7 +97,7 @@ expr = input('Enter expression (with spaces between each operation) \n or \nEnte
 split_expr = expr.split(' ')
 
 Op_req = True
-if ' ' not in expr:
+if ' ' not in expr: #Check for single interface mode or complete expression
     while True:
         if Op_req is True:
             print(interface)
@@ -167,5 +172,5 @@ while '!' in split_expr:
     del split_expr[split_expr.index('!')] #Wherever pre eval processing is done, make sure the output is string.
 
 
-print(split_expr)
+#print(split_expr)
 print('The output is: ' + str(eval(''.join(split_expr))))
